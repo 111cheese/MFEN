@@ -1,0 +1,6 @@
+主程序：
+Mnf.m
+
+注意事项：
+运行主程序并输出 data_mnfindianlyj.mat、data_mnfpavialyj.mat、data_mnfsallyj.mat，这些将作为引导滤波程序的输入。
+（上述.mat文件均在超大附件中发送）
