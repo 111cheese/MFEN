@@ -14,7 +14,7 @@ import MyGCN
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 samples_type = ['ratio', 'same_num'][0]
 save_flag = False
-use_gaussian_noise = True
+use_gaussian_noise = False
 
 
 def main(train_ratio=0.03, noise_std=0.01):
