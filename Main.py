@@ -17,14 +17,13 @@ save_flag = False
 use_gaussian_noise = True
 
 
-def main(train_ratio, noise_std=0.01):
+def main(train_ratio=0.03, noise_std=0.01):
     
 
     for (FLAG, curr_train_ratio,Scale) in [(1,0.03,60)]:
     # for (FLAG, curr_train_ratio,Scale) in [(2,0.01,300)]:
     # for (FLAG, curr_train_ratio,Scale) in [(3,0.01,400)]:
     # for (FLAG, curr_train_ratio,Scale) in [(4,0.01,400)]:
-        curr_train_ratio = train_ratio
         torch.cuda.empty_cache()
         OA_ALL = []
         AA_ALL = []
@@ -37,11 +36,11 @@ def main(train_ratio, noise_std=0.01):
         # Seed_List=[0,1]#随机种子点
         
         if FLAG == 1:
-            data_mat = sio.loadmat('C:/Users/hhh/Desktop/JSJ/第四章程序/datasets/IP/indian_pines_corrected.mat')
+            data_mat = sio.loadmat('./IP/indian_pines_corrected.mat')
             data = data_mat['indian_pines_corrected']
-            gt_mat = sio.loadmat('C:/Users/hhh/Desktop/JSJ/第四章程序/datasets/IP/indian_pines_gt.mat')
+            gt_mat = sio.loadmat('./IP/indian_pines_gt.mat')
             gt = gt_mat['indian_pines_gt']
-            data_gf_mat = sio.loadmat('C:/Users/hhh/Desktop/JSJ/第四章数据/ingf30_4.mat')
+            data_gf_mat = sio.loadmat('./ingf30_4.mat')
             data_gf = data_gf_mat['ingf30_4']
             # 参数预设
             val_ratio = 0.03  # 验证集比例，与测试集比例一致
@@ -52,11 +51,11 @@ def main(train_ratio, noise_std=0.01):
             # superpixel_scale=100
             pass
         if FLAG == 2:
-            data_mat = sio.loadmat('D:/创新点2实验/dataset/PaviaU.mat')
+            data_mat = sio.loadmat('PaviaU.mat')
             data = data_mat['paviaU']
-            gt_mat = sio.loadmat('D:/创新点2实验/dataset/PaviaU_gt.mat')
+            gt_mat = sio.loadmat('PaviaU_gt.mat')
             gt = gt_mat['paviaU_gt']
-            data_gf_mat = sio.loadmat('./datasets/upgf30_5.mat')
+            data_gf_mat = sio.loadmat('upgf30_5.mat')
             data_gf = data_gf_mat['upgf30_5']
             # 参数预设
             val_ratio = 0.01  # 验证集比例，与测试集比例一致
@@ -67,9 +66,9 @@ def main(train_ratio, noise_std=0.01):
             # superpixel_scale = 100
             pass
         if FLAG == 3:
-            data_mat = sio.loadmat('D:/创新点2实验/dataset/Salinas_corrected.mat')
+            data_mat = sio.loadmat('Salinas_corrected.mat')
             data = data_mat['salinas_corrected']
-            gt_mat = sio.loadmat('D:/创新点2实验/dataset/Salinas_gt.mat')
+            gt_mat = sio.loadmat('Salinas_gt.mat')
             gt = gt_mat['salinas_gt']
             data_gf_mat = sio.loadmat('./datasets/sagf30_5.mat')
             data_gf = data_gf_mat['sagf30_5']
@@ -82,9 +81,9 @@ def main(train_ratio, noise_std=0.01):
             # superpixel_scale = 100
             pass
         if FLAG == 4:
-            data_mat = sio.loadmat('D:/创新点2实验/dataset/WHU_Hi_LongKou.mat')
+            data_mat = sio.loadmat('WHU_Hi_LongKou.mat')
             data = data_mat['WHU_Hi_LongKou']
-            gt_mat = sio.loadmat('D:/创新点2实验/dataset/WHU_Hi_LongKou_gt.mat')
+            gt_mat = sio.loadmat('WHU_Hi_LongKou_gt.mat')
             gt = gt_mat['WHU_Hi_LongKou_gt']
             data_gf_mat = sio.loadmat('./datasets/WHU_LK_gf1.mat')
             data_gf = data_gf_mat['gf_1']
@@ -566,38 +565,7 @@ def main(train_ratio, noise_std=0.01):
 
     
 if __name__ == '__main__':
-    import os
-    file_name = './output/MFEN/IP_gaussian_noise_std.txt'
-    if not os.path.exists(file_name):
-        os.makedirs(os.path.dirname(file_name), exist_ok=True)
-    # for train_ratio in [0.001, 0.005, 0.01, 0.02]:
-    # for train_ratio in [0.01, 0.02, 0.04, 0.05]:
-    train_ratio = 0.03
-    aussian_noise_std_list = [0.005, 0.01, 0.02, 0.03, 0.04, 0.05]
-    for std_value in aussian_noise_std_list:
-        results = []
-        print(f"Training with train_ratio: {train_ratio}")
-        with open(file_name, 'a') as f:
-            f.write(f"Training with train_ratio: {train_ratio}\n")
-            f.write(f"\n--- gaussian_noise_std: {std_value} ---\n")
-        for i in range(5):
-            oa, aa, kappa, ac_list, training_time, testing_time = main(train_ratio, noise_std=std_value, exp_seed=seed)
-            results.append((oa, aa, kappa, ac_list, training_time, testing_time))
-            with open(file_name, 'a') as f:
-                f.write(f"gen: {i+1}, oa: {oa}, aa: {aa}, kappa: {kappa}\n")
-                f.write(f"AA per class: {ac_list}\n")
-        avg_oa = np.mean([result[0] for result in results])
-        avg_aa = np.mean([result[1] for result in results])
-        avg_kappa = np.mean([result[2] for result in results])
-        avg_ac_list = np.mean([result[3] for result in results], axis=0)
-        avg_train_time = np.mean([result[4] for result in results])
-        avg_test_time = np.mean([result[5] for result in results])
-        with open(file_name, 'a') as f:            
-            f.write(f"Average results for gaussian_noise_std {std_value}:\n, oa: {avg_oa}, aa: {avg_aa}, kappa: {avg_kappa}\n")
-            f.write(f"Average AA per class: {avg_ac_list}\n")
-            f.write(f"Average training time: {avg_train_time:.2f}s\n")
-            f.write(f"Average testing time: {avg_test_time:.2f}s\n")
-            f.write("===============================================================\n")
+    main()
     
     
     
